@@ -29,7 +29,9 @@ SUPABASE_KEY = os.getenv("SUPABASE_KEY")
 
 GITHUB_CLIENT_ID = os.getenv("GITHUB_CLIENT_ID")
 GITHUB_CLIENT_SECRET = os.getenv("GITHUB_CLIENT_SECRET")
-GITHUB_REDIRECT_URI = "http://localhost:8000/api/v1/straxon/auth/github/callback"
+# Vercel'de veya yerelde çalışırken dinamik olması için
+BASE_URL = os.getenv("BASE_URL", "http://localhost:8000")
+GITHUB_REDIRECT_URI = f"{BASE_URL}/api/v1/straxon/auth/github/callback"
 
 class WaitlistEntry(BaseModel):
     name: str
@@ -105,7 +107,7 @@ async def join_waitlist(entry: WaitlistEntry):
 
 @app.get("/api/v1/straxon/auth/github")
 async def github_login():
-    # GitHub'a yönlendir (scope: repo, user - analiz yapabilmek için)
+    # GitHub'a yönlendir
     return RedirectResponse(
         f"https://github.com/login/oauth/authorize?client_id={GITHUB_CLIENT_ID}&redirect_uri={GITHUB_REDIRECT_URI}&scope=repo,user"
     )
@@ -131,16 +133,15 @@ async def github_callback(code: str):
         
         access_token = token_data["access_token"]
         
-        # Token ile kullanıcı bilgilerini alıp test edelim
         user_response = await client.get(
             "https://api.github.com/user",
             headers={"Authorization": f"token {access_token}"}
         )
         user_data = user_response.json()
         
-        # Başarı durumunda Dashboard'a (Frontend) geri yönlendir
-        # Gerçek uygulamada burada token'ı güvenli bir şekilde (JWT/Session) kullanıcıya vermeliyiz
-        return RedirectResponse(url=f"http://localhost:3000?github_connected=true&username={user_data.get('login')}")
+        # Frontend URL'i de ortam değişkeninden alalım
+        FRONTEND_URL = os.getenv("FRONTEND_URL", "http://localhost:3000")
+        return RedirectResponse(url=f"{FRONTEND_URL}?github_connected=true&username={user_data.get('login')}")
 
 @app.get("/api/v1/straxon/status")
 async def straxon_status():
