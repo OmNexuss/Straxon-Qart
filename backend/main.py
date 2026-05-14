@@ -10,7 +10,9 @@ from dotenv import load_dotenv
 # .env dosyasını yükle
 load_dotenv()
 
-app = FastAPI(title="OmNexus Core API", version="1.0.0")
+# Vercel routePrefix ile uyumluluk için
+ROOT_PATH = os.getenv("ROOT_PATH", "")
+app = FastAPI(title="OmNexus Core API", version="1.0.0", root_path=ROOT_PATH)
 
 # CORS
 app.add_middleware(

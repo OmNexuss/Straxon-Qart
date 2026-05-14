@@ -26,7 +26,9 @@ export default function Home() {
     setStatus({ type: '', message: '' });
 
     try {
-      const res = await fetch('http://localhost:8000/api/v1/straxon/waitlist', {
+      // Vercel'deki routePrefix'e uygun olarak güncellendi
+      const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || '/_/backend';
+      const res = await fetch(`${backendUrl}/api/v1/straxon/waitlist`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(formData),
@@ -48,7 +50,8 @@ export default function Home() {
   };
 
   const handleGithubConnect = () => {
-    window.location.href = 'http://localhost:8000/api/v1/straxon/auth/github';
+    const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || '/_/backend';
+    window.location.href = `${backendUrl}/api/v1/straxon/auth/github`;
   };
 
   return (
