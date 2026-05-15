@@ -1,33 +1,53 @@
-# STRAXON QART 🛡️
+# STRAXON QART 🛡️ - Strategic Command Center
 
-**STRAXON QART**, OmNexus ekosisteminin stratejik komuta merkezidir. Modern bir arayüz, güçlü bir backend ve gelişmiş iletişim araçlarıyla donatılmış, profesyonel bir yönetim ve strateji platformudur.
+**STRAXON QART**, profesyoneller için tasarlanmış, OmNexus ekosisteminin proaktif "Stratejik Komuta Merkezi"dir. Sadece bir hedef takip aracı değil, kullanıcının dijital ayak izini analiz eden ve kariyer yolculuğunu Jarvis zekasıyla optimize eden bir platformdur.
 
-## 🚀 Özellikler
+---
 
-- **Vakur Tasarım**: Ciddi, premium ve kullanıcı odaklı karanlık mod arayüzü.
-- **Stratejik Yönetim**: Proje ve iş süreçlerini takip etmek için optimize edilmiş araçlar.
-- **AI Destekli Altyapı**: Gelecekteki "Jarvis" entegrasyonu için hazır mimari.
-- **Proaktif İletişim**: Resend entegrasyonu ile otomatik ve güvenli bilgilendirme.
+## 🌌 Vizyon: Proaktif Jarvis
+STRAXON QART'ın kalbinde yatan Jarvis, kullanıcının teknik gelişimini (GitHub, StackOverflow vb.) ve kariyer platformlarındaki (LinkedIn, Upwork) varlığını analiz ederek şu yetenekleri sunar:
+
+- **Zeka Derinliği (Intelligence Depth):** Kullanıcının dijital dünyadaki verilerine dayanarak oluşturulan %0-100 arası dinamik gelişim metriği.
+- **Mentorluk Modülü:** roadmap.sh verileriyle entegre, kişiselleştirilmiş teknik kariyer rotaları.
+- **Stratejik Haber Merkezi:** Kullanıcının Q1-Q4 hedefleriyle ilgili dünyadaki teknolojik gelişmeleri süzüp sunan proaktif analiz motoru.
+
+---
 
 ## 🛠️ Teknoloji Yığını
 
-### Frontend
-- **Framework**: [Next.js](https://nextjs.org/) (App Router)
-- **Styling**: Vanilla CSS (Modern & Responsive)
-- **State Management**: Zustand / React Context
+### Frontend (Modern & Responsive)
+- **Next.js 14+**: App Router mimarisi.
+- **Premium UI**: Vanilla CSS ile oluşturulmuş Dark Mode, Glassmorphism ve Bento-Grid tasarımı.
+- **PWA Ready**: Mobil öncelikli stratejik yönetim deneyimi.
 
-### Backend
-- **Framework**: [FastAPI](https://fastapi.tiangolo.com/) (Python)
-- **Database**: [Supabase](https://supabase.com/) (PostgreSQL)
-- **Email Service**: [Resend](https://resend.com/)
-- **Authentication**: GitHub OAuth / Supabase Auth
+### Backend (Modüler & Ölçeklenebilir)
+- **FastAPI (Python)**: Yüksek performanslı asenkron API.
+- **Modüler Mimari**: `core/`, `routers/`, `models/` ve `services/` ayrımıyla temiz kod yapısı.
+- **Supabase**: PostgreSQL veritabanı ve güvenli kimlik doğrulama.
+- **Resend**: Proaktif e-posta bilgilendirme sistemi.
+- **GitHub OAuth**: Tek tıkla teknik profil entegrasyonu.
 
-## 📦 Kurulum
+---
 
-### Gereksinimler
-- Node.js (v18+)
-- Python (v3.9+)
-- Git
+## 📁 Proje Yapısı
+
+```text
+backend/
+├── core/           # Yapılandırma ve veritabanı bağlantıları
+├── models/         # Pydantic veri şemaları
+├── routers/        # API uç noktaları (Auth, Profiles, Status)
+├── services/       # İş mantığı ve dış servisler (Email, Scrapers)
+└── main.py         # Uygulama giriş noktası
+
+frontend/
+├── src/app/        # Next.js App Router sayfaları
+├── src/components/ # Yeniden kullanılabilir UI bileşenleri
+└── public/         # Logo ve statik varlıklar
+```
+
+---
+
+## 🚀 Hızlı Başlangıç
 
 ### 1. Depoyu Klonlayın
 ```bash
@@ -39,10 +59,9 @@ cd Straxon-Qart
 ```bash
 cd backend
 python -m venv venv
-source venv/bin/activate  # Windows için: venv\Scripts\activate
+source venv/bin/activate  # Windows: venv\Scripts\activate
 pip install -r requirements.txt
-# .env.example dosyasını .env olarak kopyalayın ve bilgileri doldurun
-cp .env.example .env
+# .env.example dosyasını .env yaparak doldurun
 python main.py
 ```
 
@@ -50,12 +69,12 @@ python main.py
 ```bash
 cd ../frontend
 npm install
-# .env dosyasını oluşturun ve Supabase bilgilerini girin
 npm run dev
 ```
 
-## 🔒 Güvenlik Notu
-Bu projedeki hassas bilgiler (`.env` dosyaları) `.gitignore` ile korunmaktadır. Kendi kurulumunuzda gerekli API anahtarlarını temin etmeniz gerekmektedir.
+---
 
-## 📄 Lisans
-Bu proje [OmNexus](https://github.com/OmNexuss) bünyesinde geliştirilmiştir. Tüm hakları saklıdır.
+## 🛡️ Güvenlik ve Katkıda Bulunma
+Bu proje [OmNexus](https://github.com/OmNexuss) bünyesinde geliştirilmektedir. Güvenlik nedeniyle API anahtarlarınızı `.env` dosyalarında saklayın ve asla commit etmeyin.
+
+**© 2026 OmNexus Global Ecosystem. Tüm hakları saklıdır.**

@@ -77,26 +77,13 @@ export default function Home() {
           justifyContent: 'center'
         }}>
           <div style={{
-            position: 'absolute',
             width: '100%',
             height: '100%',
             background: 'url("/logo.png") center/contain no-repeat',
             zIndex: 2,
-            filter: 'drop-shadow(0 0 15px rgba(212, 175, 55, 0.3))'
+            filter: 'drop-shadow(0 0 25px rgba(212, 175, 55, 0.4))',
+            transform: 'scale(1.3)'
           }}></div>
-          <div style={{ 
-            width: '100%', 
-            height: '100%', 
-            border: '2px solid #d4af37', 
-            borderRadius: '50%', 
-            display: 'flex', 
-            alignItems: 'center', 
-            justifyContent: 'center',
-            color: '#d4af37',
-            fontSize: '1.5rem',
-            fontWeight: 'bold',
-            opacity: 0.8
-          }}>SQ</div>
         </div>
         <h1 style={{ fontSize: '1.8rem', fontWeight: '900', letterSpacing: '4px', color: '#fff' }}>STRAXON QART</h1>
         <p style={{ fontSize: '0.8rem', letterSpacing: '2px', opacity: 0.6, color: '#d4af37' }}>STRATEGIC COMMAND CENTER</p>
