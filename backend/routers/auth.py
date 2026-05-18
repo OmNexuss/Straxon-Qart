@@ -1,5 +1,6 @@
 import httpx
-from fastapi import APIRouter, RedirectResponse
+from fastapi import APIRouter
+from fastapi.responses import RedirectResponse
 from core.config import settings
 from core.database import db
 
