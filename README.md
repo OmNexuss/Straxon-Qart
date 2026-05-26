@@ -1,80 +1,106 @@
-# STRAXON QART 🛡️ - Strategic Command Center
+<div align="center">
+  <img src="https://raw.githubusercontent.com/OmNexuss/Straxon-Qart/main/public/logo.png" alt="Straxon Qart Logo" width="120" style="border-radius: 20px;"/>
+  <br/>
+  <h1>Straxon Qart</h1>
+  <p><b>Agentic AI-Powered Multi-Dimensional Developer Mentor & Heuristic Roadmap Engine</b></p>
+</div>
 
-**STRAXON QART**, profesyoneller için tasarlanmış, OmNexus ekosisteminin proaktif "Stratejik Komuta Merkezi"dir. Sadece bir hedef takip aracı değil, kullanıcının dijital ayak izini analiz eden ve kariyer yolculuğunu Jarvis zekasıyla optimize eden bir platformdur.
+<br/>
 
----
-
-## 🌌 Vizyon: Proaktif Jarvis
-STRAXON QART'ın kalbinde yatan Jarvis, kullanıcının teknik gelişimini (GitHub, StackOverflow vb.) ve kariyer platformlarındaki (LinkedIn, Upwork) varlığını analiz ederek şu yetenekleri sunar:
-
-- **Zeka Derinliği (Intelligence Depth):** Kullanıcının dijital dünyadaki verilerine dayanarak oluşturulan %0-100 arası dinamik gelişim metriği.
-- **Mentorluk Modülü:** roadmap.sh verileriyle entegre, kişiselleştirilmiş teknik kariyer rotaları.
-- **Stratejik Haber Merkezi:** Kullanıcının Q1-Q4 hedefleriyle ilgili dünyadaki teknolojik gelişmeleri süzüp sunan proaktif analiz motoru.
+**Straxon Qart**, geliştiricilerin GitHub geçmişlerini analiz eden, onlara tek bir kalıba sığmayan **hibrit geliştirici kimlikleri** (örn: *DevSecOps Specialist*, *AI-Powered Threat Analyst*) sunan ve **9 farklı bilişim disiplini** üzerinden kişiselleştirilmiş teknik kilometre taşları belirleyen yapay zeka destekli proaktif bir kariyer mentorudur.
 
 ---
 
-## 🛠️ Teknoloji Yığını
+## 🌟 Core Features (Temel Özellikler)
 
-### Frontend (Modern & Responsive)
-- **Next.js 14+**: App Router mimarisi.
-- **Premium UI**: Vanilla CSS ile oluşturulmuş Dark Mode, Glassmorphism ve Bento-Grid tasarımı.
-- **PWA Ready**: Mobil öncelikli stratejik yönetim deneyimi.
+### 🧭 1. Universal IT Matrix (9-Disiplinli Evrensel Bilişim Matrisi)
+Algoritma sadece klasik Backend/Frontend ayrımlarını değil, yazılım ekosisteminin tamamını kapsar:
+- **Backend & Web Systems**
+- **Frontend & UI/UX**
+- **DevOps & SRE**
+- **AI & Machine Learning**
+- **Cyber Security**
+- **Blockchain & Web3**
+- **Embedded Systems & IoT**
+- **Mobile Development**
+- **Game Development**
 
-### Backend (Modüler & Ölçeklenebilir)
-- **FastAPI (Python)**: Yüksek performanslı asenkron API.
-- **Modüler Mimari**: `core/`, `routers/`, `models/` ve `services/` ayrımıyla temiz kod yapısı.
-- **Supabase**: PostgreSQL veritabanı ve güvenli kimlik doğrulama.
-- **Resend**: Proaktif e-posta bilgilendirme sistemi.
-- **GitHub OAuth**: Tek tıkla teknik profil entegrasyonu.
+### 🧬 2. Dynamic Hybrid Title Synthesis
+Kullanıcıların en yüksek yetenek sergilediği iki farklı disiplin birleştirilerek **Sentez Unvanlar** oluşturulur.
+*Örnek:* Kullanıcının repolarında güçlü *Backend* ve *DevOps* ayak izleri bulunursa, sistem kullanıcıyı **"Cloud Native Backend Engineer ☁️"** olarak etiketler.
 
----
+### 🎯 3. Heuristic Milestone Engine
+Sistem, eksiklikleri tespit etmek için repoları tarar ve adım adım bir öğrenme haritası çıkartır.
+*Örnek:* Yapay Zeka (AI) repoları incelendiğinde, matematik (Math) bilindiği ancak veri manipülasyonu (Pandas) imzası olmadığı tespit edilirse, Jarvis kullanıcıya öncelikli hedef olarak **"Data Manipulation (Pandas/NumPy)"** öğrenmesini hedefler ve doğrudan `roadmap.sh`'in ilgili eğitim başlığına bağlar.
 
-## 📁 Proje Yapısı
-
-```text
-backend/
-├── core/           # Yapılandırma ve veritabanı bağlantıları
-├── models/         # Pydantic veri şemaları
-├── routers/        # API uç noktaları (Auth, Profiles, Status)
-├── services/       # İş mantığı ve dış servisler (Email, Scrapers)
-└── main.py         # Uygulama giriş noktası
-
-frontend/
-├── src/app/        # Next.js App Router sayfaları
-├── src/components/ # Yeniden kullanılabilir UI bileşenleri
-└── public/         # Logo ve statik varlıklar
-```
+### 🍱 4. Premium Bento-Box Dashboard
+Next.js ile inşa edilmiş koyu tema ve glassmorphism detaylarıyla zenginleştirilmiş bento-box tasarımlı gösterge paneli. Kullanıcılar radar grafikleri, yetenek yüzdeleri ve çift eylem kartları üzerinden ilerlemelerini takip edebilir.
 
 ---
 
-## 🚀 Hızlı Başlangıç
+## 🏗️ Architecture & Tech Stack
 
-### 1. Depoyu Klonlayın
+**Frontend (Client)**
+- **Next.js 14** (App Router, Server Components)
+- **React.js**
+- **CSS3** (Bento-box Grid Layout, Glassmorphism, Micro-animations)
+
+**Backend (Core Engine & API)**
+- **FastAPI** (Python 3)
+- **httpx** (Asynchronous GitHub API Calls)
+- **Modular Roadmap Engine** (Data & Logic ayrıştırılmış temiz mimari)
+
+**Database & Auth**
+- **Supabase** (PostgreSQL, Row Level Security, Magic Link Auth)
+
+---
+
+## 🚀 Getting Started (Kurulum)
+
+Projeyi lokalinizde çalıştırmak için aşağıdaki adımları izleyin:
+
+### 1. Repoyu Klonlayın
 ```bash
 git clone https://github.com/OmNexuss/Straxon-Qart.git
 cd Straxon-Qart
 ```
 
-### 2. Backend Kurulumu
+### 2. Backend'i Başlatın
 ```bash
 cd backend
 python -m venv venv
-source venv/bin/activate  # Windows: venv\Scripts\activate
-pip install -r requirements.txt
-# .env.example dosyasını .env yaparak doldurun
-python main.py
-```
+# Windows:
+venv\Scripts\activate
+# Mac/Linux:
+# source venv/bin/activate
 
-### 3. Frontend Kurulumu
+pip install -r requirements.txt
+uvicorn main:app --reload
+```
+*Backend `http://localhost:8000` adresinde çalışacaktır.*
+
+### 3. Frontend'i Başlatın
+Yeni bir terminal sekmesi açın:
 ```bash
-cd ../frontend
+cd frontend
 npm install
 npm run dev
+```
+*Frontend `http://localhost:3000` adresinde çalışacaktır.*
+
+---
+
+## 🧪 Testing
+
+Heuristik motor ve 9 disiplin matrisinin tüm kombinasyonlarını doğrulayan test paketi projede bulunmaktadır. Testleri çalıştırmak için (backend klasöründe):
+```bash
+python -m unittest discover tests/
+# veya özel test scripti için:
+python ../scratch/test_roadmap.py
 ```
 
 ---
 
-## 🛡️ Güvenlik ve Katkıda Bulunma
-Bu proje [OmNexus](https://github.com/OmNexuss) bünyesinde geliştirilmektedir. Güvenlik nedeniyle API anahtarlarınızı `.env` dosyalarında saklayın ve asla commit etmeyin.
-
-**© 2026 OmNexus Global Ecosystem. Tüm hakları saklıdır.**
+<div align="center">
+  <i>Developed with precision and agentic intelligence by OmNexus.</i>
+</div>

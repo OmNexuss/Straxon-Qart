@@ -2,6 +2,7 @@ from fastapi import APIRouter, HTTPException
 from models.schemas import WaitlistEntry
 from core.database import db
 from services.email_service import email_service
+from services.roadmap import roadmap_service
 
 router = APIRouter(prefix="/api/v1/straxon")
 
@@ -26,4 +27,12 @@ async def get_user_profile(email: str):
     profile = await db.get_profile(email)
     if not profile:
         raise HTTPException(status_code=404, detail="Profil bulunamadı")
-    return profile
+    
+    profile_dict = dict(profile)
+    github_username = profile_dict.get("github_username")
+    
+    # GitHub verilerini analiz et ve profil objesine ekle
+    roadmap_analysis = await roadmap_service.analyze_profile(github_username)
+    profile_dict["roadmap_match"] = roadmap_analysis
+    
+    return profile_dict
