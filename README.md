@@ -1,5 +1,5 @@
 <div align="center">
-  <img src="https://raw.githubusercontent.com/OmNexuss/Straxon-Qart/main/public/logo.png" alt="Straxon Qart Logo" width="120" style="border-radius: 20px;"/>
+  <img src="https://raw.githubusercontent.com/OmNexuss/Straxon-Qart/master/frontend/public/logo.png" alt="Straxon Qart Logo" width="120" style="border-radius: 20px;"/>
   <br/>
   <h1>Straxon Qart</h1>
   <p><b>Agentic AI-Powered Multi-Dimensional Developer Mentor & Heuristic Roadmap Engine</b></p>
