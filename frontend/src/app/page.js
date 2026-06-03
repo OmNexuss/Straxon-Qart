@@ -26,9 +26,7 @@ export default function Home() {
     setStatus({ type: '', message: '' });
 
     try {
-      // Vercel'deki routePrefix'e uygun olarak güncellendi
-      const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || '/_/backend';
-      const res = await fetch(`${backendUrl}/api/v1/straxon/waitlist`, {
+      const res = await fetch('/api/v1/straxon/waitlist', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(formData),
@@ -40,7 +38,7 @@ export default function Home() {
         setStatus({ type: 'success', message: 'Kaydınız başarıyla alındı. OmNexus ekosistemine hoş geldiniz.' });
         setFormData({ name: '', email: '' });
       } else {
-        setStatus({ type: 'error', message: data.detail || 'Bir hata oluştu.' });
+        setStatus({ type: 'error', message: data.error || data.detail || 'Bir hata oluştu.' });
       }
     } catch (err) {
       setStatus({ type: 'error', message: 'Sunucuya bağlanılamadı. Lütfen API\'nin çalıştığından emin olun.' });
@@ -50,8 +48,7 @@ export default function Home() {
   };
 
   const handleGithubConnect = () => {
-    const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || '/_/backend';
-    window.location.href = `${backendUrl}/api/v1/straxon/auth/github`;
+    window.location.href = '/api/v1/straxon/auth/github';
   };
 
   return (

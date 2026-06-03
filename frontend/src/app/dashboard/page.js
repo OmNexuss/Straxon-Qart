@@ -136,8 +136,7 @@ export default function DashboardPage() {
 
       if (email) {
         try {
-          const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || "";
-          const res = await fetch(`${backendUrl}/api/v1/straxon/profile/${email}`);
+          const res = await fetch(`/api/v1/straxon/profile/${email}`);
           const data = await res.json();
           if (res.ok && data && !data.error) setProfile(data);
         } catch (err) {
@@ -287,8 +286,7 @@ export default function DashboardPage() {
               9 bilişim disiplininde kişisel yetenek haritanı ve spesifik kilometre taşlarını görmek için GitHub hesabını bağla.
             </p>
             <button onClick={() => {
-              const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || "";
-              window.location.href = `${backendUrl}/api/v1/straxon/auth/github`;
+              window.location.href = '/api/v1/straxon/auth/github';
             }} style={{
               background: "#24292e", color: "#fff",
               padding: "0.7rem 1.4rem", borderRadius: "10px",
