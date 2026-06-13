@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from core.config import settings
-from routers import auth, profiles, status
+from routers import auth, profiles, status, news
 
 # FastAPI Uygulaması
 app = FastAPI(
@@ -23,6 +23,8 @@ app.add_middleware(
 app.include_router(status.router)
 app.include_router(auth.router)
 app.include_router(profiles.router)
+app.include_router(news.router)
+
 
 if __name__ == "__main__":
     import uvicorn

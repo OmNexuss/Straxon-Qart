@@ -13,6 +13,7 @@ class Settings:
     RESEND_API_KEY: str = os.getenv("RESEND_API_KEY")
     SUPABASE_URL: str = os.getenv("SUPABASE_URL")
     SUPABASE_KEY: str = os.getenv("SUPABASE_KEY")
+    GEMINI_API_KEY: str = os.getenv("GEMINI_API_KEY")
     
     # GitHub OAuth
     GITHUB_CLIENT_ID: str = os.getenv("GITHUB_CLIENT_ID")

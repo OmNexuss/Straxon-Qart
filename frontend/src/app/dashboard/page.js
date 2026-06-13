@@ -1,5 +1,5 @@
 "use client";
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import DashboardShell, { IntelligenceCard, TimelineCard, JarvisInsightCard } from '@/components/Dashboard/Shell';
 import OmNexusSignature from '@/components/OmNexusSignature';
 
@@ -15,7 +15,6 @@ function getDynamicGoals(synthesisTitle, primaryDiscipline) {
   if (d.includes("Embedded"))    return ["C/C++ Low-Level","MCU & Peripherals","RTOS & Interrupts","IoT Protocols & Cloud"];
   if (d.includes("Mobile"))      return ["Core Language & UI","State Management","Networking & Local DB","App Store Deployment"];
   if (d.includes("Game"))        return ["Math & Physics Systems","Game Engine Integration","Design Patterns (ECS)","Shaders & Graphics API"];
-  // Full-Stack ve diğer hibrit unvanlar
   if (synthesisTitle?.includes("Full-Stack")) return ["API Design & DB","React / Next.js UI","Docker Containers","Production Deploy"];
   if (synthesisTitle?.includes("DevSecOps"))  return ["Linux & Networking","Container Security","Pentest Automation","SIEM & Monitoring"];
   if (synthesisTitle?.includes("Web3"))       return ["Solidity Contracts","Backend APIs","dApp Frontend","DeFi & Audit"];
@@ -30,10 +29,8 @@ function CompatibilityBar({ role, emoji, color, score, url }) {
       style={{ textDecoration: "none", color: "inherit", display: "block" }}>
       <div style={{
         display: "flex", alignItems: "center", gap: "0.6rem",
-        padding: "0.45rem 0.2rem",
-        borderRadius: "8px",
-        transition: "background 0.2s",
-        cursor: "pointer"
+        padding: "0.45rem 0.2rem", borderRadius: "8px",
+        transition: "background 0.2s", cursor: "pointer"
       }}
         onMouseOver={e => e.currentTarget.style.background = "rgba(255,255,255,0.03)"}
         onMouseOut={e => e.currentTarget.style.background = "transparent"}
@@ -44,8 +41,7 @@ function CompatibilityBar({ role, emoji, color, score, url }) {
           <div style={{
             width: `${score}%`, height: "100%",
             background: `linear-gradient(90deg, ${color}, ${color}88)`,
-            boxShadow: `0 0 8px ${color}55`,
-            borderRadius: "3px",
+            boxShadow: `0 0 8px ${color}55`, borderRadius: "3px",
             transition: "width 1.2s cubic-bezier(0.4,0,0.2,1)"
           }} />
         </div>
@@ -55,68 +51,160 @@ function CompatibilityBar({ role, emoji, color, score, url }) {
   );
 }
 
-// ─── Milestone Kartı ──────────────────────────────────────────────────────────
-function MilestoneCard({ milestone, label }) {
-  if (!milestone) return null;
-  const { title, anchor_url, why_needed, action_steps, emoji, color } = milestone;
-  return (
-    <div style={{
-      background: `rgba(${hexToRgb(color)}, 0.04)`,
-      border: `1px solid ${color}30`,
-      borderRadius: "16px",
-      padding: "1.1rem",
-      position: "relative",
-      flex: 1
-    }}>
-      {/* Label badge */}
-      <div style={{
-        position: "absolute", top: "-10px", left: "12px",
-        background: color, color: "#000",
-        fontSize: "0.6rem", fontWeight: "900",
-        padding: "2px 10px", borderRadius: "8px",
-        letterSpacing: "1px", textTransform: "uppercase"
-      }}>
-        {label}
-      </div>
-      <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", marginTop: "0.4rem", marginBottom: "0.5rem" }}>
-        <span style={{ fontSize: "1.1rem" }}>{emoji}</span>
-        <h3 style={{ fontSize: "0.9rem", fontWeight: "900", color, margin: 0, lineHeight: 1.2 }}>{title}</h3>
-      </div>
-      <p style={{ fontSize: "0.75rem", opacity: 0.8, lineHeight: "1.5", marginBottom: "0.8rem", color: "#f0f0f2" }}>
-        {why_needed}
-      </p>
-      <div style={{ display: "flex", flexDirection: "column", gap: "0.35rem", marginBottom: "0.9rem" }}>
-        {(action_steps || []).map((step, i) => (
-          <div key={i} style={{ display: "flex", gap: "7px", alignItems: "flex-start", fontSize: "0.72rem" }}>
-            <span style={{ color, fontWeight: "900", marginTop: "1px" }}>✓</span>
-            <span style={{ opacity: 0.9 }}>{step}</span>
-          </div>
-        ))}
-      </div>
-      <a href={anchor_url} target="_blank" rel="noopener noreferrer" style={{
-        display: "block", textAlign: "center",
-        background: `linear-gradient(135deg, ${color}, ${color}88)`,
-        color: "#000", textDecoration: "none",
-        padding: "0.55rem", borderRadius: "8px",
-        fontWeight: "900", fontSize: "0.72rem",
-        letterSpacing: "0.8px",
-        transition: "all 0.3s"
-      }}
-        onMouseOver={e => e.currentTarget.style.transform = "translateY(-1px)"}
-        onMouseOut={e => e.currentTarget.style.transform = "translateY(0)"}
-      >
-        YOL HARİTASINDA AÇ ➔
-      </a>
-    </div>
-  );
-}
-
-// hex rengi rgb parçalarına ayır (rgba için)
+// ─── hex → rgb ────────────────────────────────────────────────────────────────
 function hexToRgb(hex) {
   hex = hex?.replace("#", "") || "212,175,55";
   if (hex.length === 3) hex = hex.split("").map(c => c + c).join("");
   const num = parseInt(hex, 16);
   return `${(num >> 16) & 255}, ${(num >> 8) & 255}, ${num & 255}`;
+}
+
+// ─── Görev Kartı (Tamamlanabilir) ────────────────────────────────────────────
+function TaskCard({ task, onToggle }) {
+  const meta = task.metadata || {};
+  const color = meta.color || "#d4af37";
+  const emoji = meta.emoji || "🎯";
+  const steps = meta.action_steps || [];
+
+  return (
+    <div style={{
+      background: task.is_completed ? "rgba(0,255,136,0.03)" : `rgba(${hexToRgb(color)}, 0.04)`,
+      border: `1px solid ${task.is_completed ? "#00ff8844" : color + "30"}`,
+      borderRadius: "16px", padding: "1.1rem", position: "relative", flex: 1,
+      transition: "all 0.4s ease",
+      opacity: task.is_completed ? 0.65 : 1,
+    }}>
+      {/* Badge */}
+      {meta.label && (
+        <div style={{
+          position: "absolute", top: "-10px", left: "12px",
+          background: task.is_completed ? "#00ff88" : color,
+          color: "#000", fontSize: "0.6rem", fontWeight: "900",
+          padding: "2px 10px", borderRadius: "8px",
+          letterSpacing: "1px", textTransform: "uppercase",
+          transition: "background 0.3s"
+        }}>
+          {task.is_completed ? "✓ Tamamlandı" : meta.label}
+        </div>
+      )}
+
+      <div style={{ display: "flex", alignItems: "flex-start", gap: "0.5rem", marginTop: "0.4rem", marginBottom: "0.5rem", justifyContent: "space-between" }}>
+        <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
+          <span style={{ fontSize: "1.1rem" }}>{emoji}</span>
+          <h3 style={{
+            fontSize: "0.9rem", fontWeight: "900",
+            color: task.is_completed ? "#00ff88" : color,
+            margin: 0, lineHeight: 1.2,
+            textDecoration: task.is_completed ? "line-through" : "none"
+          }}>{task.title}</h3>
+        </div>
+        {/* Tamamla / Geri al butonu */}
+        <button onClick={() => onToggle(task.id, !task.is_completed)} style={{
+          background: task.is_completed ? "rgba(0,255,136,0.1)" : "rgba(255,255,255,0.05)",
+          border: `1px solid ${task.is_completed ? "#00ff8866" : "rgba(255,255,255,0.1)"}`,
+          color: task.is_completed ? "#00ff88" : "rgba(255,255,255,0.5)",
+          borderRadius: "8px", padding: "4px 10px",
+          fontSize: "0.65rem", fontWeight: "800", cursor: "pointer",
+          letterSpacing: "0.5px", transition: "all 0.3s",
+          whiteSpace: "nowrap", flexShrink: 0,
+        }}
+          onMouseOver={e => e.currentTarget.style.opacity = "0.8"}
+          onMouseOut={e => e.currentTarget.style.opacity = "1"}
+        >
+          {task.is_completed ? "↩ Geri Al" : "✓ Tamamla"}
+        </button>
+      </div>
+
+      {task.description && (
+        <p style={{ fontSize: "0.75rem", opacity: 0.8, lineHeight: "1.5", marginBottom: "0.8rem", color: "#f0f0f2" }}>
+          {task.description}
+        </p>
+      )}
+      {steps.length > 0 && !task.is_completed && (
+        <div style={{ display: "flex", flexDirection: "column", gap: "0.35rem", marginBottom: "0.9rem" }}>
+          {steps.map((step, i) => (
+            <div key={i} style={{ display: "flex", gap: "7px", alignItems: "flex-start", fontSize: "0.72rem" }}>
+              <span style={{ color, fontWeight: "900", marginTop: "1px" }}>✓</span>
+              <span style={{ opacity: 0.9 }}>{step}</span>
+            </div>
+          ))}
+        </div>
+      )}
+      {meta.anchor_url && !task.is_completed && (
+        <a href={meta.anchor_url} target="_blank" rel="noopener noreferrer" style={{
+          display: "block", textAlign: "center",
+          background: `linear-gradient(135deg, ${color}, ${color}88)`,
+          color: "#000", textDecoration: "none",
+          padding: "0.55rem", borderRadius: "8px",
+          fontWeight: "900", fontSize: "0.72rem", letterSpacing: "0.8px",
+          transition: "all 0.3s"
+        }}
+          onMouseOver={e => e.currentTarget.style.transform = "translateY(-1px)"}
+          onMouseOut={e => e.currentTarget.style.transform = "translateY(0)"}
+        >
+          YOL HARİTASINDA AÇ ➔
+        </a>
+      )}
+    </div>
+  );
+}
+
+// ─── Haber Kartı ─────────────────────────────────────────────────────────────
+function NewsItem({ item, profileId, email, onRead }) {
+  const [clicked, setClicked] = useState(false);
+
+  const handleClick = async () => {
+    if (clicked) return;
+    setClicked(true);
+    onRead(item);
+    try {
+      await fetch("/api/v1/straxon/news/click", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ profile_id: profileId, news_id: item.id, email }),
+      });
+    } catch (_) {}
+  };
+
+  const sourceColor = item.source === "devto" ? "#a8b1ff" : "#f59e0b";
+  const sourceLabel = item.source === "devto" ? "dev.to" : "HackerNews";
+
+  return (
+    <a href={item.url} target="_blank" rel="noopener noreferrer"
+      onClick={handleClick}
+      style={{ textDecoration: "none", display: "block" }}
+    >
+      <div style={{
+        padding: "0.65rem 0.5rem",
+        borderBottom: "1px solid rgba(255,255,255,0.05)",
+        cursor: "pointer", borderRadius: "8px",
+        transition: "background 0.2s",
+        opacity: clicked ? 0.55 : 1,
+      }}
+        onMouseOver={e => e.currentTarget.style.background = "rgba(255,255,255,0.03)"}
+        onMouseOut={e => e.currentTarget.style.background = "transparent"}
+      >
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: "0.5rem" }}>
+          <p style={{ margin: 0, fontSize: "0.82rem", opacity: 0.9, lineHeight: "1.4", color: "#f0f0f2", flex: 1 }}>
+            {item.title}
+          </p>
+          <span style={{
+            fontSize: "0.6rem", fontWeight: "700", letterSpacing: "1px",
+            color: sourceColor, padding: "2px 6px",
+            border: `1px solid ${sourceColor}44`, borderRadius: "5px",
+            flexShrink: 0, textTransform: "uppercase"
+          }}>
+            {sourceLabel}
+          </span>
+        </div>
+        {clicked && (
+          <span style={{ fontSize: "0.6rem", color: "#00ff88", marginTop: "3px", display: "inline-block" }}>
+            +15 Zeka Derinliği ✓
+          </span>
+        )}
+      </div>
+    </a>
+  );
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -125,6 +213,9 @@ function hexToRgb(hex) {
 export default function DashboardPage() {
   const [profile, setProfile] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [tasks, setTasks] = useState([]);
+  const [news, setNews] = useState([]);
+  const [intelligenceScore, setIntelligenceScore] = useState(0);
 
   useEffect(() => {
     const fetchProfile = async () => {
@@ -132,20 +223,58 @@ export default function DashboardPage() {
       const email = params.get("email");
       const username = params.get("username");
 
-      if (username) setProfile({ github_username: username, email, intelligence_score: 20 });
+      if (username) {
+        setProfile({ github_username: username, email, intelligence_score: 20 });
+        setIntelligenceScore(20);
+      }
+
+      let discipline = "";
 
       if (email) {
         try {
           const res = await fetch(`/api/v1/straxon/profile/${email}`);
           const data = await res.json();
-          if (res.ok && data && !data.error) setProfile(data);
+          if (res.ok && data && !data.error) {
+            setProfile(data);
+            setTasks(data.tasks || []);
+            setIntelligenceScore(data.intelligence_score || 0);
+            discipline = data.roadmap_match?.primary_discipline || "";
+          }
         } catch (err) {
           console.error("Profil yüklenemedi:", err);
         }
       }
+      
+      // Haberleri her durumda getir (profil bulunamasa bile genel haberler çekilir)
+      fetchNews(discipline);
       setLoading(false);
     };
     fetchProfile();
+  }, []);
+
+  const fetchNews = async (discipline = "") => {
+    try {
+      const res = await fetch(`/api/v1/straxon/news?disciplines=${encodeURIComponent(discipline)}&limit=12`);
+      const data = await res.json();
+      if (res.ok) setNews(data.news || []);
+    } catch (_) {}
+  };
+
+  // Görev tamamlama toggle
+  const handleTaskToggle = useCallback(async (taskId, isCompleted) => {
+    setTasks(prev => prev.map(t => t.id === taskId ? { ...t, is_completed: isCompleted } : t));
+    try {
+      await fetch("/api/v1/straxon/tasks/status", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ task_id: taskId, is_completed: isCompleted }),
+      });
+    } catch (_) {}
+  }, []);
+
+  // Haber tıklandığında puan artır (local state)
+  const handleNewsRead = useCallback(() => {
+    setIntelligenceScore(prev => Math.min(100, prev + 15));
   }, []);
 
   const rm = profile?.roadmap_match || {};
@@ -153,14 +282,12 @@ export default function DashboardPage() {
   const synthesisEmoji     = rm.synthesis_emoji || "⚡";
   const compatibilities    = rm.compatibilities || [];
   const primaryDiscipline  = rm.primary_discipline || null;
-  const primaryMilestone   = rm.primary_milestone || null;
-  const secondaryMilestone = rm.secondary_milestone || null;
-
   const goals = getDynamicGoals(synthesisTitle, primaryDiscipline);
 
-  const insight = profile?.github_username
-    ? `Hoş geldin @${profile.github_username}. ${synthesisTitle ? `Jarvis seni "${synthesisTitle}" olarak tanımladı.` : ""} Şu anki zeka derinliğin %${profile.intelligence_score || 0}. Aşağıdaki kilometre taşlarına odaklan.`
-    : "Henüz bir teknik platform bağlanmadı. Jarvis'in seni analiz edebilmesi için GitHub hesabını bağla.";
+  const jarvisInsight = profile?.jarvis_insight
+    || (profile?.github_username
+      ? `Hoş geldin @${profile.github_username}. ${synthesisTitle ? `Jarvis seni "${synthesisTitle}" olarak tanımladı.` : ""} Şu anki zeka derinliğin %${intelligenceScore}.`
+      : "Henüz bir teknik platform bağlanmadı. Jarvis'in seni analiz edebilmesi için GitHub hesabını bağla.");
 
   if (loading) return (
     <div style={{ background: "#0a0a0c", minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center", color: "#d4af37", letterSpacing: "3px", fontSize: "0.85rem" }}>
@@ -171,13 +298,13 @@ export default function DashboardPage() {
   return (
     <DashboardShell>
       {/* 1. Intelligence Depth */}
-      <IntelligenceCard score={profile?.intelligence_score || 0} status={profile?.jarvis_mood || "Initializing..."} />
+      <IntelligenceCard score={intelligenceScore} status={profile?.jarvis_mood || "Initializing..."} />
 
       {/* 2. Q1-Q4 Strategic Timeline */}
       <TimelineCard goals={goals} />
 
       {/* 3. Jarvis Insight */}
-      <JarvisInsightCard insight={insight} />
+      <JarvisInsightCard insight={jarvisInsight} />
 
       {/* 4. Integration Matrix */}
       <div className="bento-card integration-matrix">
@@ -192,7 +319,8 @@ export default function DashboardPage() {
                 padding: "0.8rem", borderRadius: "12px",
                 display: "flex", alignItems: "center", gap: "0.5rem",
                 fontSize: "0.82rem", opacity: active || !isGh ? 1 : 0.35,
-                border: "1px solid rgba(255,255,255,0.04)"
+                border: "1px solid rgba(255,255,255,0.04)",
+                transition: "all 0.3s"
               }}>
                 <div style={{
                   width: "8px", height: "8px", borderRadius: "50%",
@@ -211,85 +339,62 @@ export default function DashboardPage() {
         </div>
       </div>
 
-      {/* 5. UNIVERSAL DEVELOPER SYNTHESIS — Ana Bento Kartı */}
+      {/* 5. Universal Developer Synthesis */}
       <div className="bento-card roadmap-mentor" style={{
         border: rm.github_connected ? "1px solid rgba(212,175,55,0.25)" : "1px solid rgba(255,255,255,0.05)"
       }}>
         {rm.github_connected ? (
           <div style={{ display: "flex", flexDirection: "column", height: "100%", gap: "0.8rem" }}>
-
-            {/* ── Sentez Unvanı Rozeti ── */}
+            {/* Sentez Unvanı */}
             <div style={{
               display: "flex", alignItems: "center", justifyContent: "space-between",
-              background: "rgba(212,175,55,0.04)",
-              border: "1px solid rgba(212,175,55,0.15)",
+              background: "rgba(212,175,55,0.04)", border: "1px solid rgba(212,175,55,0.15)",
               borderRadius: "14px", padding: "0.8rem 1.1rem"
             }}>
               <div>
-                <div style={{ fontSize: "0.65rem", opacity: 0.45, letterSpacing: "1.5px", textTransform: "uppercase", marginBottom: "2px" }}>
-                  Geliştirici Kimliği
-                </div>
+                <div style={{ fontSize: "0.65rem", opacity: 0.45, letterSpacing: "1.5px", textTransform: "uppercase", marginBottom: "2px" }}>Geliştirici Kimliği</div>
                 <div style={{ fontSize: "1.1rem", fontWeight: "900", color: "#fff", display: "flex", alignItems: "center", gap: "0.4rem" }}>
                   <span>{synthesisEmoji}</span>
                   <span>{synthesisTitle || primaryDiscipline || "Analiz Ediliyor..."}</span>
                 </div>
               </div>
               <div style={{ textAlign: "right" }}>
-                <div style={{ fontSize: "1.5rem", fontWeight: "900", color: "#d4af37" }}>
-                  {rm.primary_score || 0}%
-                </div>
+                <div style={{ fontSize: "1.5rem", fontWeight: "900", color: "#d4af37" }}>{rm.primary_score || 0}%</div>
                 <div style={{ fontSize: "0.6rem", opacity: 0.45, letterSpacing: "1px" }}>ANA UYUM</div>
               </div>
             </div>
 
-            {/* ── 9 Disiplinli Yetenek Matrisi ── */}
-            <div style={{
-              background: "rgba(255,255,255,0.01)",
-              border: "1px solid rgba(255,255,255,0.04)",
-              borderRadius: "14px", padding: "0.8rem 0.9rem"
-            }}>
-              <div style={{ fontSize: "0.65rem", opacity: 0.4, letterSpacing: "1.5px", textTransform: "uppercase", marginBottom: "0.5rem" }}>
-                🌐 Evrensel Yetenek Matrisi
-              </div>
+            {/* 9 Disiplinli Yetenek Matrisi */}
+            <div style={{ background: "rgba(255,255,255,0.01)", border: "1px solid rgba(255,255,255,0.04)", borderRadius: "14px", padding: "0.8rem 0.9rem" }}>
+              <div style={{ fontSize: "0.65rem", opacity: 0.4, letterSpacing: "1.5px", textTransform: "uppercase", marginBottom: "0.5rem" }}>🌐 Evrensel Yetenek Matrisi</div>
               {compatibilities.length > 0 ? (
-                compatibilities.map(c => (
-                  <CompatibilityBar key={c.role} {...c} />
-                ))
+                compatibilities.map(c => <CompatibilityBar key={c.role} {...c} />)
               ) : (
                 <p style={{ fontSize: "0.75rem", opacity: 0.5 }}>Veri analiz ediliyor...</p>
               )}
             </div>
 
-            {/* ── Kilometre Taşları ── */}
-            <div style={{ fontSize: "0.65rem", opacity: 0.4, letterSpacing: "1.5px", textTransform: "uppercase" }}>
-              🎯 Kişisel Kilometre Taşları
-            </div>
-            <div style={{ display: "flex", gap: "0.8rem", flex: 1 }}>
-              <MilestoneCard milestone={primaryMilestone} label="Birincil Hedef" />
-              {secondaryMilestone && (
-                <MilestoneCard milestone={secondaryMilestone} label="İkincil Hedef" />
-              )}
-            </div>
-
+            {/* Görevler — Tamamlanabilir Kilometre Taşları */}
+            <div style={{ fontSize: "0.65rem", opacity: 0.4, letterSpacing: "1.5px", textTransform: "uppercase" }}>🎯 Görev Listesi</div>
+            {tasks.length > 0 ? (
+              <div style={{ display: "flex", gap: "0.8rem", flex: 1, flexWrap: "wrap" }}>
+                {tasks.map(task => (
+                  <TaskCard key={task.id} task={task} onToggle={handleTaskToggle} />
+                ))}
+              </div>
+            ) : (
+              <p style={{ fontSize: "0.75rem", opacity: 0.5 }}>Görevler yükleniyor...</p>
+            )}
           </div>
         ) : (
-          /* ── GitHub Bağlı Değil ── */
           <div style={{ display: "flex", flexDirection: "column", height: "100%", justifyContent: "center", alignItems: "center", gap: "1.2rem", textAlign: "center", padding: "1.5rem" }}>
             <div className="card-title" style={{ color: "#d4af37" }}>🎯 Career Roadmap Mentor</div>
-            <div style={{
-              width: "56px", height: "56px", borderRadius: "50%",
-              background: "rgba(255,255,255,0.02)", display: "flex",
-              alignItems: "center", justifyContent: "center",
-              border: "1px solid rgba(255,255,255,0.06)", fontSize: "1.8rem"
-            }}>🌐</div>
+            <div style={{ width: "56px", height: "56px", borderRadius: "50%", background: "rgba(255,255,255,0.02)", display: "flex", alignItems: "center", justifyContent: "center", border: "1px solid rgba(255,255,255,0.06)", fontSize: "1.8rem" }}>🌐</div>
             <p style={{ fontSize: "0.82rem", opacity: 0.65, lineHeight: "1.6", maxWidth: "300px" }}>
               9 bilişim disiplininde kişisel yetenek haritanı ve spesifik kilometre taşlarını görmek için GitHub hesabını bağla.
             </p>
-            <button onClick={() => {
-              window.location.href = '/api/v1/straxon/auth/github';
-            }} style={{
-              background: "#24292e", color: "#fff",
-              padding: "0.7rem 1.4rem", borderRadius: "10px",
+            <button onClick={() => { window.location.href = '/api/v1/straxon/auth/github'; }} style={{
+              background: "#24292e", color: "#fff", padding: "0.7rem 1.4rem", borderRadius: "10px",
               border: "1px solid #444", fontWeight: "700", fontSize: "0.8rem",
               display: "flex", alignItems: "center", gap: "8px",
               margin: "0 auto", cursor: "pointer", transition: "all 0.3s"
@@ -303,15 +408,36 @@ export default function DashboardPage() {
         )}
       </div>
 
-      {/* 6. News Feed */}
+      {/* 6. News Feed — Dinamik Haber Merkezi */}
       <div className="bento-card news-feed">
-        <div className="card-title">Strategic News Feed</div>
-        <div style={{ display: "flex", flexDirection: "column", gap: "0.5rem" }}>
-          {["Go 1.22 Release: New features for Cloud Native", "The Rise of Agentic AI in DevOps", "Solidity 0.8.25: EVM updates & gas optimizations"].map((item, i) => (
-            <div key={i} style={{ fontSize: "0.82rem", padding: "0.5rem 0.2rem", borderBottom: "1px solid rgba(255,255,255,0.05)", opacity: 0.8 }}>
-              {item}
+        <div className="card-title">
+          <span style={{ color: "#d4af37" }}>📡</span> Strategic News Feed
+          {news.length > 0 && (
+            <span style={{ fontSize: "0.6rem", opacity: 0.4, marginLeft: "auto", fontWeight: "400", letterSpacing: "1px" }}>
+              {news.length} haber · tıkla +15 🧠
+            </span>
+          )}
+        </div>
+        <div style={{ display: "flex", flexDirection: "column", overflowY: "auto", maxHeight: "260px" }}>
+          {news.length > 0 ? (
+            news.map(item => (
+              <NewsItem
+                key={item.id}
+                item={item}
+                profileId={profile?.id}
+                email={profile?.email}
+                onRead={handleNewsRead}
+              />
+            ))
+          ) : (
+            <div style={{ display: "flex", flexDirection: "column", gap: "0.5rem" }}>
+              {["Haberler yükleniyor...", "Dashboard her açıldığında güncellenir"].map((item, i) => (
+                <div key={i} style={{ fontSize: "0.82rem", padding: "0.5rem 0.2rem", borderBottom: "1px solid rgba(255,255,255,0.05)", opacity: 0.4 }}>
+                  {item}
+                </div>
+              ))}
             </div>
-          ))}
+          )}
         </div>
       </div>
 
