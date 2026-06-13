@@ -1,7 +1,27 @@
 -- ============================================================
--- Straxon-Qart — Supabase Şema Betiği (Faz 1 Güncellemeleri)
+-- Straxon-Qart — Supabase Tam Şema Betiği
 -- Supabase SQL Editor'da çalıştırın.
 -- ============================================================
+
+-- 0. Profiles
+CREATE TABLE IF NOT EXISTS profiles (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    email VARCHAR(255) UNIQUE NOT NULL,
+    full_name VARCHAR(255),
+    github_username VARCHAR(255),
+    intelligence_score INTEGER DEFAULT 20,
+    jarvis_mood VARCHAR(50) DEFAULT 'Analyzing',
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now())
+);
+
+-- 0.5 Intelligence Logs
+CREATE TABLE IF NOT EXISTS intelligence_logs (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    profile_id UUID REFERENCES profiles(id) ON DELETE CASCADE,
+    change_amount INTEGER NOT NULL,
+    reason TEXT,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now())
+);
 
 -- 1. Digital Footprints (Kullanıcının entegre platform verileri)
 CREATE TABLE IF NOT EXISTS digital_footprints (
