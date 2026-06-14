@@ -135,7 +135,5 @@ python ../scratch/test_roadmap.py
 
 ---
 
-<div align="center">
-  <br/>
-  <p><i>Code meets intuition. Developed with precision and agentic intelligence by OmNexus.</i></p>
-</div>
+<br/>
+  <p><i>Code meets intuition. Developed with precision and agentic intelligence by <a href="https://github.com/OmNexuss"> OmNexus.</a></i></p>
