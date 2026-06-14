@@ -10,8 +10,19 @@ CREATE TABLE IF NOT EXISTS profiles (
     full_name VARCHAR(255),
     github_username VARCHAR(255),
     intelligence_score INTEGER DEFAULT 20,
+    intelligence_depth_awarded BOOLEAN DEFAULT false,
     jarvis_mood VARCHAR(50) DEFAULT 'Analyzing',
     created_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now())
+);
+
+-- 0.6 Universal Skill Matrices (Developer Profile Skills)
+CREATE TABLE IF NOT EXISTS universal_skill_matrices (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    profile_id UUID REFERENCES profiles(id) ON DELETE CASCADE,
+    skill_name VARCHAR(100) NOT NULL,
+    score INTEGER DEFAULT 0,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()),
+    UNIQUE(profile_id, skill_name)
 );
 
 -- 0.5 Intelligence Logs

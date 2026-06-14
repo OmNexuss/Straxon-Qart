@@ -2,6 +2,7 @@ from fastapi import APIRouter, HTTPException, BackgroundTasks
 from pydantic import BaseModel
 from core.database import db
 from services.news_service import news_service
+from services.analytics_service import analyze_intelligence_depth
 
 router = APIRouter(prefix="/api/v1/straxon")
 
@@ -35,21 +36,22 @@ async def get_news(
 
 
 @router.post("/news/click")
-async def record_news_click(payload: NewsClickRequest):
+async def record_news_click(payload: NewsClickRequest, background_tasks: BackgroundTasks):
     """
-    Haber tıklamasını kaydet ve kullanıcıya +15 Zeka Derinliği puanı ver.
+    Haber tıklamasını kaydet ve arka planda analiz sürecini başlat.
     """
     profile = await db.get_profile(payload.email)
     if not profile:
         raise HTTPException(status_code=404, detail="Profil bulunamadı")
 
     await db.log_news_click(payload.profile_id, payload.news_id)
-    new_score = await db.add_score(payload.email, 15, "News article clicked")
+    
+    # Arka planda Intelligence Depth Analizini tetikle
+    background_tasks.add_task(analyze_intelligence_depth, payload.profile_id, payload.email)
 
     return {
         "status": "success",
-        "score_added": 15,
-        "new_intelligence_score": new_score
+        "message": "Click logged. Intelligence analysis running in background."
     }
 
 

@@ -150,13 +150,12 @@ function TaskCard({ task, onToggle }) {
 }
 
 // ─── Haber Kartı ─────────────────────────────────────────────────────────────
-function NewsItem({ item, profileId, email, onRead }) {
+function NewsItem({ item, profileId, email }) {
   const [clicked, setClicked] = useState(false);
 
   const handleClick = async () => {
     if (clicked) return;
     setClicked(true);
-    onRead(item);
     try {
       await fetch("/api/v1/straxon/news/click", {
         method: "POST",
@@ -199,7 +198,7 @@ function NewsItem({ item, profileId, email, onRead }) {
         </div>
         {clicked && (
           <span style={{ fontSize: "0.6rem", color: "#00ff88", marginTop: "3px", display: "inline-block" }}>
-            +15 Zeka Derinliği ✓
+            Analiz ediliyor ✓
           </span>
         )}
       </div>
@@ -270,11 +269,6 @@ export default function DashboardPage() {
         body: JSON.stringify({ task_id: taskId, is_completed: isCompleted }),
       });
     } catch (_) {}
-  }, []);
-
-  // Haber tıklandığında puan artır (local state)
-  const handleNewsRead = useCallback(() => {
-    setIntelligenceScore(prev => Math.min(100, prev + 15));
   }, []);
 
   const rm = profile?.roadmap_match || {};
@@ -414,7 +408,7 @@ export default function DashboardPage() {
           <span style={{ color: "#d4af37" }}>📡</span> Strategic News Feed
           {news.length > 0 && (
             <span style={{ fontSize: "0.6rem", opacity: 0.4, marginLeft: "auto", fontWeight: "400", letterSpacing: "1px" }}>
-              {news.length} haber · tıkla +15 🧠
+              {news.length} haber
             </span>
           )}
         </div>
@@ -426,7 +420,6 @@ export default function DashboardPage() {
                 item={item}
                 profileId={profile?.id}
                 email={profile?.email}
-                onRead={handleNewsRead}
               />
             ))
           ) : (

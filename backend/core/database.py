@@ -22,6 +22,14 @@ class SupabaseService:
             data = response.json()
             return data[0] if data else None
 
+    async def set_intelligence_depth_awarded(self, email: str):
+        async with httpx.AsyncClient() as client:
+            await client.patch(
+                f"{self.url}/rest/v1/profiles?email=eq.{email}",
+                headers=self.headers,
+                json={"intelligence_depth_awarded": True}
+            )
+
     async def create_or_update_profile(self, profile_data: dict):
         email = profile_data.get("email")
         existing = await self.get_profile(email)
@@ -119,6 +127,23 @@ class SupabaseService:
                 json={"profile_id": profile_id, "news_id": news_id}
             )
 
+    async def get_top_skills(self, profile_id: str, limit: int = 3) -> list:
+        """Kullanıcının en yüksek puanlı yeteneklerini getirir."""
+        async with httpx.AsyncClient() as client:
+            response = await client.get(
+                f"{self.url}/rest/v1/universal_skill_matrices?profile_id=eq.{profile_id}&order=score.desc&limit={limit}",
+                headers=self.headers
+            )
+            return response.json() if response.status_code == 200 else []
+
+    async def get_recent_news_clicks(self, profile_id: str, since_iso: str) -> list:
+        """Belirtilen tarihten sonraki haber tıklama loglarını, haber detaylarıyla birlikte getirir."""
+        async with httpx.AsyncClient() as client:
+            # Supabase join syntax: select=*,news_feed(*)
+            url = f"{self.url}/rest/v1/news_click_logs?profile_id=eq.{profile_id}&clicked_at=gte.{since_iso}&select=*,news_feed(*)"
+            response = await client.get(url, headers=self.headers)
+            return response.json() if response.status_code == 200 else []
+
     # ─── User Tasks Fonksiyonları ─────────────────────────────────
     async def get_user_tasks(self, profile_id: str) -> list:
         """Kullanıcıya ait tüm görevleri getir."""
@@ -193,5 +218,14 @@ class SupabaseService:
                     headers=self.headers,
                     json=payload
                 )
+
+    async def get_digital_footprints(self, profile_id: str) -> list:
+        """Kullanıcının dijital ayak izi verilerini getirir."""
+        async with httpx.AsyncClient() as client:
+            response = await client.get(
+                f"{self.url}/rest/v1/digital_footprints?profile_id=eq.{profile_id}",
+                headers=self.headers
+            )
+            return response.json() if response.status_code == 200 else []
 
 db = SupabaseService()
