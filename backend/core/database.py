@@ -22,13 +22,7 @@ class SupabaseService:
             data = response.json()
             return data[0] if data else None
 
-    async def set_intelligence_depth_awarded(self, email: str):
-        async with httpx.AsyncClient() as client:
-            await client.patch(
-                f"{self.url}/rest/v1/profiles?email=eq.{email}",
-                headers=self.headers,
-                json={"intelligence_depth_awarded": True}
-            )
+
 
     async def create_or_update_profile(self, profile_data: dict):
         email = profile_data.get("email")
@@ -74,6 +68,18 @@ class SupabaseService:
                         "reason": reason
                     }
                 )
+
+    async def has_intelligence_depth_log(self, profile_id: str) -> bool:
+        """Kullanıcının daha önce Intelligence Depth ödülü alıp almadığını loglardan kontrol et."""
+        async with httpx.AsyncClient() as client:
+            response = await client.get(
+                f"{self.url}/rest/v1/intelligence_logs?profile_id=eq.{profile_id}&reason=eq.Intelligence Depth Analysis: Consistent Reading Pattern (Top 3 Skills)",
+                headers=self.headers
+            )
+            if response.status_code == 200:
+                data = response.json()
+                return len(data) > 0
+            return False
 
     async def add_score(self, email: str, amount: int, reason: str):
         """Kullanıcının puanını artır ve logla."""

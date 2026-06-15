@@ -22,7 +22,7 @@ export const IntelligenceCard = ({ score, status }) => (
         <span className="score-label">Analyzed</span>
       </div>
       <div className="depth-bar-container">
-        <div className="depth-bar-progress" style={{ width: `${score}%` }}></div>
+        <div className="depth-bar-progress" style={{ width: `${Math.min(score, 100)}%` }}></div>
       </div>
       <div className="depth-status">{status}</div>
     </div>

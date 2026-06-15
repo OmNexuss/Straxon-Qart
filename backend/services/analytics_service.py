@@ -12,8 +12,9 @@ async def analyze_intelligence_depth(profile_id: str, email: str):
         if not profile:
             return
         
-        # Eğer zaten ödül verildiyse çık
-        if profile.get("intelligence_depth_awarded"):
+        # Eğer zaten ödül verildiyse loglardan kontrol et
+        has_awarded = await db.has_intelligence_depth_log(profile["id"])
+        if has_awarded:
             print(f"[Analytics] Profil {profile_id} zaten Intelligence Depth ödülünü almış. Atlanıyor.")
             return
 
@@ -44,7 +45,7 @@ async def analyze_intelligence_depth(profile_id: str, email: str):
         if matching_articles_count >= 20:
             print(f"[Analytics] Profil {profile_id} için koşullar sağlandı, +15 Intelligence Depth ekleniyor.")
             await db.add_score(email, 15, "Intelligence Depth Analysis: Consistent Reading Pattern (Top 3 Skills)")
-            await db.set_intelligence_depth_awarded(email)
-            
+
     except Exception as e:
         print(f"[AnalyticsService] Analiz hatası: {e}")
+
