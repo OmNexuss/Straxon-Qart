@@ -159,4 +159,4 @@ python ../scratch/test_roadmap.py
 ---
 
   <br/>
-  <p><i>Code meets intuition. Developed with precision and agentic intelligence by <a href="https://github.com/OmNexuss"> OmNexus.</a></i></p>
+**© 2026 <a href="https://github.com/OmNexuss"> OmNexus.</a> Tüm Hakları Saklıdır.**
