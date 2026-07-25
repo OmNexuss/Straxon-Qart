@@ -158,5 +158,5 @@ python ../scratch/test_roadmap.py
 
 ---
 
-  <br/>
+
 **© 2026 <a href="https://github.com/OmNexuss"> OmNexus.</a> Tüm Hakları Saklıdır.**
